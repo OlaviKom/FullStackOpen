@@ -1,2 +1,2 @@
-# FullStackRepository
-Full Stack course task return repository
+# FullStackOpen
+Full Stack open course task return repository
