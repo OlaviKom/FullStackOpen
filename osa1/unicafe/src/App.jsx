@@ -1,13 +1,10 @@
 import { useState } from 'react'
 
-//kokeilu
-const Average = (props) => {
-  const sum = props.allFeedbacks.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-  const avg = sum/props.allFeedbacks.length
 
-  return (
+const Statistic = (props) => {
+  return(
     <div>
-      <p> average {avg}</p>
+      {props.name} {props.stats} {props.sign}
     </div>
   )
 }
@@ -48,12 +45,12 @@ const App = () => {
       <button onClick={handleNeutralClick}>neutral</button>
       <button onClick={handleBadClick}>bad</button>
       <h1>statistic</h1>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-      <div>all {all}</div>
-      <div>average {((good*1)+(bad*-1))/all}</div>
-      <div>positive {good/all} %</div>
+      <Statistic name = 'good' stats = {good}/>
+      <Statistic name = 'neutral' stats = {neutral}/>
+      <Statistic name = 'bad' stats = {bad}/>
+      <Statistic name = 'all' stats = {all}/>
+      <Statistic name = 'average' stats = {((good*1)+(bad*-1))/all}/>
+      <Statistic name = 'positive' stats = {good/all} sign = '%'/>
     </div>
   )
 }
@@ -61,3 +58,17 @@ const App = () => {
 export default App
 
 //<Average allFeedbacks = {allFeedbacks}/>
+
+/*
+//kokeilu
+const Average = (props) => {
+  const sum = props.allFeedbacks.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+  const avg = sum/props.allFeedbacks.length
+
+  return (
+    <div>
+      <p> average {avg}</p>
+    </div>
+  )
+}
+*/
