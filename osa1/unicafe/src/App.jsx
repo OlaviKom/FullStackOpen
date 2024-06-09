@@ -1,20 +1,5 @@
 import { useState } from 'react'
 
-const Header = (props) => {
-  return(
-    <div>
-      <h1> {props.header}</h1>
-    </div>
-  )
-}
-
-const Button = (props) => {
-  return (
-    <button onClick = {props.handleClick}>
-      {props.text}
-    </button>
-  )
-}
 
 const App = () => {
   // tallenna napit omaan tilaansa
@@ -22,9 +7,7 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
-  const handleGoodClick = () => {
 
-  }
 
   return (
     <div>
