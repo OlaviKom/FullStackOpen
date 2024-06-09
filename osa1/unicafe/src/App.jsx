@@ -37,7 +37,7 @@ const App = () => {
     setBad(bad +1)
   }
 
-
+  if (all === 0){
   return (
     <div>
       <h1>give feedback</h1>
@@ -45,14 +45,26 @@ const App = () => {
       <button onClick={handleNeutralClick}>neutral</button>
       <button onClick={handleBadClick}>bad</button>
       <h1>statistic</h1>
-      <Statistic name = 'good' stats = {good}/>
-      <Statistic name = 'neutral' stats = {neutral}/>
-      <Statistic name = 'bad' stats = {bad}/>
-      <Statistic name = 'all' stats = {all}/>
-      <Statistic name = 'average' stats = {((good*1)+(bad*-1))/all}/>
-      <Statistic name = 'positive' stats = {good/all} sign = '%'/>
+      <div>no feedback given</div>
     </div>
   )
+  } else {
+    return (
+      <div>
+        <h1>give feedback</h1>
+        <button onClick={handleGoodClick}>good</button>
+        <button onClick={handleNeutralClick}>neutral</button>
+        <button onClick={handleBadClick}>bad</button>
+        <h1>statistic</h1>
+        <Statistic name = 'good' stats = {good}/>
+        <Statistic name = 'neutral' stats = {neutral}/>
+        <Statistic name = 'bad' stats = {bad}/>
+        <Statistic name = 'all' stats = {all}/>
+        <Statistic name = 'average' stats = {((good*1)+(bad*-1))/all}/>
+        <Statistic name = 'positive' stats = {(good/all)*100} sign = '%'/>
+      </div>
+    )
+  }  
 }
 
 export default App
