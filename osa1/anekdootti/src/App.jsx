@@ -22,12 +22,13 @@ const App = () => {
 
   const listOfPoints = Array(anecdotes.length).fill(0)
    
-  let [selected, setSelected] = useState(0)
+  const [selected, setSelected] = useState(0)
   const [points, setPoints] = useState(listOfPoints)
 
 
   const handleAnecdoteClick = () => {
-    setSelected(selected = Math.floor(Math.random()* anecdotes.length))
+    const index = Math.floor(Math.random()* anecdotes.length)
+    setSelected(index)
   }
 
   const handleVoteClick = () => {
