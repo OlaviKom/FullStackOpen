@@ -1,14 +1,41 @@
 import { useState } from 'react'
 
+const Statistic = ({good, neutral, bad, all}) => {
+  if (all === 0){
+    return (
+      <div>
+        no feedback given
+      </div>
+    )
+  } else {
+    return(
+      <div>
+        <StatisticLine text = 'good' value = {good}/>
+        <StatisticLine text = 'neutral' value = {neutral}/>
+        <StatisticLine text = 'bad' value = {bad}/>
+        <StatisticLine text = 'all' value = {all}/>
+        <StatisticLine text = 'average' value = {((good*1)+(bad*-1))/all}/>
+        <StatisticLine text = 'positive' value = {(good/all)*100} sign = '%'/>
+      </div>
+    )
+  }
+}
 
-const Statistic = (props) => {
+const Button = (props) => {
   return(
-    <div>
-      {props.name} {props.stats} {props.sign}
-    </div>
+    <button onClick = {props.handleClick}>
+      {props.text}
+    </button>
   )
 }
 
+const StatisticLine = (props) => {
+  return(
+    <div>
+      {props.text} {props.value} {props.sign}
+    </div>
+  )
+}
 
 
 const App = () => {
@@ -37,50 +64,19 @@ const App = () => {
     setBad(bad +1)
   }
 
-  if (all === 0){
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={handleGoodClick}>good</button>
-      <button onClick={handleNeutralClick}>neutral</button>
-      <button onClick={handleBadClick}>bad</button>
+      <Button handleClick={handleGoodClick} text = 'good'/>
+      <Button handleClick={handleNeutralClick} text = 'neutral'/>
+      <Button handleClick={handleBadClick} text = 'bad'/>
       <h1>statistic</h1>
-      <div>no feedback given</div>
+      <Statistic good = {good} neutral = {neutral} bad = {bad} all = {all} />
+        
     </div>
   )
-  } else {
-    return (
-      <div>
-        <h1>give feedback</h1>
-        <button onClick={handleGoodClick}>good</button>
-        <button onClick={handleNeutralClick}>neutral</button>
-        <button onClick={handleBadClick}>bad</button>
-        <h1>statistic</h1>
-        <Statistic name = 'good' stats = {good}/>
-        <Statistic name = 'neutral' stats = {neutral}/>
-        <Statistic name = 'bad' stats = {bad}/>
-        <Statistic name = 'all' stats = {all}/>
-        <Statistic name = 'average' stats = {((good*1)+(bad*-1))/all}/>
-        <Statistic name = 'positive' stats = {(good/all)*100} sign = '%'/>
-      </div>
-    )
-  }  
+  
 }
 
 export default App
 
-//<Average allFeedbacks = {allFeedbacks}/>
-
-/*
-//kokeilu
-const Average = (props) => {
-  const sum = props.allFeedbacks.reduce((accumulator, currentValue) => accumulator + currentValue, 0)
-  const avg = sum/props.allFeedbacks.length
-
-  return (
-    <div>
-      <p> average {avg}</p>
-    </div>
-  )
-}
-*/
