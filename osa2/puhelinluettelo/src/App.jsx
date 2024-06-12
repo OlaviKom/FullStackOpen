@@ -4,7 +4,7 @@ const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas' }
   ]) 
-  const [newName, setNewName] = useState('test')
+  const [newName, setNewName] = useState('')
 
   const handleNameChange = (event) => {
     console.log(event.target.value)
