@@ -12,11 +12,16 @@ const App = () => {
   } 
 
   const addName = (event) => {
+    const personsNames = persons.map((person) => person.name)
+    if(personsNames.includes(newName)){
+      alert(`${newName} is all ready in phonebook`)
+    }else {
       event.preventDefault()
       const personObject = {
         name: newName
       }
       setPersons(persons.concat(personObject))
+    } 
   }
 
   return (
