@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 
 const Persons = (props) => {
@@ -62,16 +63,13 @@ const App = () => {
   const [newFilterValue, setNewFilterValue] = useState('')
 
   useEffect(() => {
-    console.log('effects')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+        .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
-  console.log('render', persons.length, 'persons')
 
   const handleNameChange = (event) => {
     console.log(event.target.value)
@@ -98,14 +96,11 @@ const App = () => {
         name: newName
       }
       personObject.number = newNumber
-      //setPersons(persons.concat(personObject))
-      axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          setNewName('')
-          setNewNumber('')
-        })
+      personService
+        .create(personObject)
+          .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
+          })
     } 
   }
   
@@ -126,3 +121,14 @@ const App = () => {
 }
 
 export default App
+
+/*
+  console.log('effects')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  */
