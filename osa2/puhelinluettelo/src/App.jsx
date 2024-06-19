@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
 
 
 const Person = ({ person, deletePerson }) => {
@@ -44,6 +45,18 @@ const PersonForm = (props) => {
   )
 }
 
+const Notification = ({ message }) => {
+  if(message === null){
+    return null
+  }
+  
+  return(
+    <div className='succeed'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
 
@@ -52,6 +65,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
 
   const [newFilterValue, setNewFilterValue] = useState('')
+
+  const[succeedMessage, setSucceedMessage] = useState(null)
 
   const personsToShow = persons.filter(person=> person.name.toLowerCase().includes(newFilterValue.toLowerCase()))
 
@@ -91,6 +106,10 @@ const App = () => {
           .update(changedPerson.id, changedPerson)
            .then((returnedPerson) => {
             setPersons(persons.map(p => p.id !== changedPerson.id ? p : returnedPerson))
+            setSucceedMessage(`Updated ${returnedPerson.name} number`)
+            setTimeout(() => {
+              setSucceedMessage(null)
+            }, 3000)
             setNewName('')
             setNewNumber('')
            })    
@@ -104,6 +123,10 @@ const App = () => {
         .create(personObject)
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
+            setSucceedMessage(`Added ${returnedPerson.name}`)
+            setTimeout(() => {
+              setSucceedMessage(null)
+            }, 3000)
             setNewName('')
             setNewNumber('')
           })
@@ -118,6 +141,10 @@ const App = () => {
       .remove(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id ))
+          setSucceedMessage(`Deleted ${person.name}`)
+          setTimeout(() => {
+            setSucceedMessage(null)
+          }, 3000)
         })
     
   }
@@ -125,6 +152,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={succeedMessage}/>
       <Filter newFilterValue = {newFilterValue} handleFilterValueChange = {handleFilterValueChange}/>
       <h2>add a new</h2>
       <PersonForm addPerson = {addPerson} 
