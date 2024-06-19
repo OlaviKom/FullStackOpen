@@ -83,7 +83,18 @@ const App = () => {
     event.preventDefault()
     const personsNames = persons.map((person) => person.name)
     if(personsNames.includes(newName)){
-      alert(`${newName} is all ready in phonebook`)
+      const person = persons.find(p => p.name === newName)
+      const changedPerson = {... person}
+      changedPerson.number = newNumber
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with new one?`)){
+        personService
+          .update(changedPerson.id, changedPerson)
+           .then((returnedPerson) => {
+            setPersons(persons.map(p => p.id !== changedPerson.id ? p : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+           })    
+      }
     }else {
       const personObject = {
         name: newName
@@ -93,6 +104,8 @@ const App = () => {
         .create(personObject)
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
+            setNewName('')
+            setNewNumber('')
           })
     } 
   }
