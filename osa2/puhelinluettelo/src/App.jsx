@@ -3,21 +3,12 @@ import axios from 'axios'
 import personService from './services/persons'
 
 
-const Persons = (props) => {
-  if (props.newName === ''){
-    return (
-      props.persons.map(person =>
-        <div key = {person.name}>{person.name} {person.number}</div>
-      )
-    )
-  } else {
-    const filteredPersons = props.persons.filter(person=> person.name.toLowerCase().includes(props.newFilterValue.toLowerCase()))
-    return(
-      filteredPersons.map(person =>
-        <div key = {person.name}>{person.name} {person.number}</div>
-      )
-    )
-  }
+const Person = ({ person, deletePerson }) => {
+  
+  return(
+    <div> {person.name} {person.number}
+    <button onClick = {() => {deletePerson(person.id)}}>delete</button> </div>
+  )
 }
 
 const Filter = (props) => {
@@ -62,6 +53,8 @@ const App = () => {
 
   const [newFilterValue, setNewFilterValue] = useState('')
 
+  const personsToShow = persons.filter(person=> person.name.toLowerCase().includes(newFilterValue.toLowerCase()))
+
   useEffect(() => {
     personService
       .getAll()
@@ -103,6 +96,18 @@ const App = () => {
           })
     } 
   }
+
+  const deletePersonOf = (id) => {
+    console.log(id)
+    const person = persons.find(p => p.id === id)
+    if (window.confirm(`Delete ${person.name} ?`))
+    personService
+      .remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id ))
+        })
+    
+  }
   
   return (
     <div>
@@ -114,21 +119,14 @@ const App = () => {
         newNumber = {newNumber} handleNumberChange = {handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons = {persons} newFilterValue = {newFilterValue}/>
+      {personsToShow.map(person => 
+        <Person key = {person.id} 
+        person = {person} 
+        deletePerson ={() => deletePersonOf(person.id)}/>
+      )}
     </div>
   )
-
 }
 
 export default App
 
-/*
-  console.log('effects')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  }, [])
-  */
