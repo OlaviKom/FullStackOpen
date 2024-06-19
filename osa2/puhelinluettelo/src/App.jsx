@@ -45,16 +45,23 @@ const PersonForm = (props) => {
   )
 }
 
-const Notification = ({ message }) => {
+const Notification = ({ message, type }) => {
   if(message === null){
     return null
   }
-  
+  if(type === 'succeed'){
+    return(
+      <div className='succeed'>
+        {message}
+      </div>
+    )
+  } else {
   return(
-    <div className='succeed'>
-      {message}
-    </div>
-  )
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }  
 }
 
 const App = () => {
@@ -66,7 +73,9 @@ const App = () => {
 
   const [newFilterValue, setNewFilterValue] = useState('')
 
-  const[succeedMessage, setSucceedMessage] = useState(null)
+  const[notificationMessage, setNotificationMessage] = useState(null)
+
+  const[notificationType, setNotificationType] = useState(null)
 
   const personsToShow = persons.filter(person=> person.name.toLowerCase().includes(newFilterValue.toLowerCase()))
 
@@ -106,9 +115,11 @@ const App = () => {
           .update(changedPerson.id, changedPerson)
            .then((returnedPerson) => {
             setPersons(persons.map(p => p.id !== changedPerson.id ? p : returnedPerson))
-            setSucceedMessage(`Updated ${returnedPerson.name} number`)
+            setNotificationMessage(`Updated ${returnedPerson.name} number`)
+            setNotificationType('succeed')
             setTimeout(() => {
-              setSucceedMessage(null)
+              setNotificationMessage(null)
+              setNotificationType(null)
             }, 3000)
             setNewName('')
             setNewNumber('')
@@ -123,9 +134,11 @@ const App = () => {
         .create(personObject)
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
-            setSucceedMessage(`Added ${returnedPerson.name}`)
+            setNotificationMessage(`Added ${returnedPerson.name}`)
+            setNotificationType('succeed')
             setTimeout(() => {
-              setSucceedMessage(null)
+              setNotificationMessage(null)
+              setNotificationType(null)
             }, 3000)
             setNewName('')
             setNewNumber('')
@@ -141,10 +154,21 @@ const App = () => {
       .remove(id)
         .then(() => {
           setPersons(persons.filter(person => person.id !== id ))
-          setSucceedMessage(`Deleted ${person.name}`)
+          setNotificationMessage(`Deleted ${person.name}`)
+          setNotificationType('succeed')
           setTimeout(() => {
-            setSucceedMessage(null)
+            setNotificationMessage(null)
+            setNotificationType(null)
           }, 3000)
+        })
+        .catch(error => {
+          setNotificationMessage(`information of ${person.name} has already been removed from server`)
+          setNotificationType('error')
+          setTimeout(() => {
+            setNotificationMessage(null)
+            setNotificationType(null)
+          }, 5000)
+          
         })
     
   }
@@ -152,7 +176,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={succeedMessage}/>
+      <Notification message={notificationMessage} type = {notificationType}/>
       <Filter newFilterValue = {newFilterValue} handleFilterValueChange = {handleFilterValueChange}/>
       <h2>add a new</h2>
       <PersonForm addPerson = {addPerson} 
