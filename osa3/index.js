@@ -68,10 +68,14 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
+  console.log(persons)
+  const id = request.params.id
+  console.log(`deleting ${id}`)
+  persons = persons.filter(p => p.id !== id)
 
   response.status(204).end()
+
+  console.log(persons)
 })
 
 const generateId = () => {
@@ -105,6 +109,8 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person)
 
   response.json(person)
+
+  console.log(persons.length)
 })
 
 const PORT = process.env.PORT || 3001

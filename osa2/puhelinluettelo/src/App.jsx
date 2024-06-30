@@ -149,28 +149,27 @@ const App = () => {
   const deletePersonOf = (id) => {
     console.log(id)
     const person = persons.find(p => p.id === id)
-    if (window.confirm(`Delete ${person.name} ?`))
-    personService
-      .remove(id)
-        .then(() => {
-          setPersons(persons.filter(person => person.id !== id ))
-          setNotificationMessage(`Deleted ${person.name}`)
-          setNotificationType('succeed')
-          setTimeout(() => {
-            setNotificationMessage(null)
-            setNotificationType(null)
-          }, 3000)
-        })
-        .catch(error => {
-          setNotificationMessage(`information of ${person.name} has already been removed from server`)
-          setNotificationType('error')
-          setTimeout(() => {
-            setNotificationMessage(null)
-            setNotificationType(null)
-          }, 5000)
-          
-        })
-    
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      personService
+        .remove(id)
+          .then(() => {
+            setPersons(persons.filter(p => p.id !== id ))
+            setNotificationMessage(`Deleted ${person.name}`)
+            setNotificationType('succeed')
+            setTimeout(() => {
+              setNotificationMessage(null)
+              setNotificationType(null)
+            }, 3000)
+          })
+          .catch(error => {
+            setNotificationMessage(`information of ${person.name} has already been removed from server`)
+            setNotificationType('error')
+            setTimeout(() => {
+              setNotificationMessage(null)
+              setNotificationType(null)
+            }, 5000)
+          })
+    }
   }
   
   return (
