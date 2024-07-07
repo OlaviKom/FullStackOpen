@@ -6,11 +6,24 @@ const app = express()
 
 const Person = require('./models/person')
 
+app.use(express.static('dist'))
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:', request.path)
+  console.log('Body:', request.body)
+  console.log('---')
+  next()
+}
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
   if(error.name === 'castError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if(error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+
   }
   next (error)
 }
@@ -43,7 +56,9 @@ app.use(express.json())
 
 app.use(cors())
 
-app.use(express.static('dist'))
+
+
+app.use(requestLogger)
 
 morgan.token('body', (req) => JSON.stringify(req.body))
 
@@ -97,20 +112,16 @@ const generateId = () => {
   return String(id)
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-
+  /*
   if(!body.name) {
     return response.status(400).json({error: 'name missing'})
   }
   
   if(!body.number) {
     return response.status(400).json({error: 'number missing'})
-  }
-  /*
-  if (persons.find(person => person.name === body.name)){
-    return response.status(403).json({error: 'name must be unique'})
   }
     */
   
@@ -119,15 +130,11 @@ app.post('/api/persons', (request, response) => {
     number: body.number,
   })
 
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
-
-  //persons = persons.concat(person)
-
-  //response.json(person)
-
-  //console.log(persons.length)
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
