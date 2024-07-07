@@ -61,11 +61,14 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/info', (request, response) => {
-  const personsLength = persons.length
-  response.send(`
-    <p>Phonebook has info for ${personsLength}</p> 
-    <p>${new Date}</p>`)
+app.get('/info', (request, response, next) => {
+  Person.find({}).then(persons => {
+    const personsLength = persons.length
+    response.send(`
+      <p>Phonebook has info for ${personsLength} person</p> 
+      <p>${new Date}</p>`)
+  })
+  .catch(error => next(error))
 }) 
 
 app.get('/api/persons/:id', (request, response, next) => {
