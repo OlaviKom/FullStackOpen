@@ -28,29 +28,6 @@ const errorHandler = (error, request, response, next) => {
   next (error)
 }
 
-let persons = [
-    { 
-      "name": "Arto Hellas", 
-      "number": "040-123456",
-      "id": "1"
-    },
-    { 
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523",
-      "id": "2"
-    },
-    { 
-      "name": "Dan Abramov", 
-      "number": "12-43-234345",
-      "id": "3"
-    },
-    { 
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122",
-      "id": "4"
-    }
-  ]
-
 
 app.use(express.json())
 
@@ -83,8 +60,8 @@ app.get('/info', (request, response, next) => {
       <p>Phonebook has info for ${personsLength} person</p> 
       <p>${new Date}</p>`)
   })
-  .catch(error => next(error))
-}) 
+    .catch(error => next(error))
+})
 
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
@@ -106,25 +83,17 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+/*
 const generateId = () => {
   const id = Math.floor(Math.random() * 1000)
 
   return String(id)
 }
+  */
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  /*
-  if(!body.name) {
-    return response.status(400).json({error: 'name missing'})
-  }
-  
-  if(!body.number) {
-    return response.status(400).json({error: 'number missing'})
-  }
-    */
-  
   const person = new Person({
     name: body.name,
     number: body.number,
@@ -138,15 +107,10 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
-  console.log(body)
-  
-  const person = {
-    number: body.number
-  }
-  
+  const { number } = request.body
+  console.log( { number } )
 
-  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+  Person.findByIdAndUpdate(request.params.id, { number }, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
