@@ -123,7 +123,15 @@ const App = () => {
             }, 3000)
             setNewName('')
             setNewNumber('')
-           })    
+           })
+           .catch(error => {
+            setNotificationMessage(`${error.response.data.error}`)
+            setNotificationType('error')
+            setTimeout(() => {
+              setNotificationMessage(null)
+              setNotificationType(null)
+            }, 5000)
+          })    
       }
     }else {
       const personObject = {
@@ -143,7 +151,7 @@ const App = () => {
             setNewName('')
             setNewNumber('')
           })
-          . catch(error => {
+          .catch(error => {
             setNotificationMessage(`${error.response.data.error}`)
             setNotificationType('error')
             setTimeout(() => {
