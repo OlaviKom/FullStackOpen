@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -118,7 +118,7 @@ test('blog without title or url is not added', async() => {
         //url: 'dreamtester.fi',
         likes: '300' ,
     }
-    
+
     await api
         .post('/api/blogs')
         .send(newBlog)
@@ -129,6 +129,24 @@ test('blog without title or url is not added', async() => {
     assert.strictEqual(response.body.length, initialBlogs.length)
     
 })
+
+describe('deletion of a blog', () => {
+    test('blog deleted successfully', async() =>{
+        const blogsInDb = await Blog.find({})
+        const blogs = blogsInDb.map(blog => blog.toJSON())
+        const blogToDelete = blogs[0]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+        
+        const response = await api.get('/api/blogs')
+
+        assert.strictEqual(response.body.length, initialBlogs.length -1)
+
+        assert(!response.body.includes(blogToDelete))
+    })
+})    
 
 after(async () => {
     await mongoose.connection.close()
