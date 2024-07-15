@@ -6,6 +6,7 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const { request } = require('node:http')
 
 
 const initialBlogs = [
@@ -53,7 +54,80 @@ test('blogs are retuned as json', async() => {
 test('there are three blogs', async() => {
     const response = await api.get('/api/blogs')
 
-    assert.strictEqual(response.body.length, 3)
+    assert.strictEqual(response.body.length, initialBlogs.length)
+})
+
+test('id is written right', async() => {
+    const response = await api.get('/api/blogs')
+
+    const blogs = response.body.forEach(blog => {
+        const valueNames = Object.keys(blog)
+        assert.strictEqual(valueNames.includes('id'), true)
+        // assert.strictEqual(blog._id, undefined)
+    })   
+})
+
+test('blog can be added', async() => {
+    const newBlog = {
+        title: 'Unelmieni testaus',
+        author: 'Saara Testimaa',
+        url: 'dreamtester.fi',
+        likes: '300' ,
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    const titles = response.body.map(r => r.title)
+    console.log(titles)
+
+    assert.strictEqual(response.body.length, initialBlogs.length +1)
+    assert(titles.includes('Unelmieni testaus'))
+})
+
+test('blog likes are at least 0', async() => {
+    const newBlog = {
+        title: 'Testailun ihanuus',
+        author: 'Sami Testimaa',
+        url: 'lovelytester.fi'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    
+    response.body.forEach(blog => {
+        console.log(blog.likes)
+        assert.strictEqual(blog.likes >= 0, true)
+    })
+})
+
+test('blog without title or url is not added', async() => {
+    const newBlog = {
+        //title: 'Testailua ja kaljaa',
+        author: 'Kari Näkäräinen',
+        //url: 'dreamtester.fi',
+        likes: '300' ,
+    }
+    
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, initialBlogs.length)
+    
 })
 
 after(async () => {
