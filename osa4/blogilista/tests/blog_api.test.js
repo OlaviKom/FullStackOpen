@@ -146,7 +146,32 @@ describe('deletion of a blog', () => {
 
         assert(!response.body.includes(blogToDelete))
     })
-})    
+})
+
+describe('updating of a blog', () => {
+    test('blog update successfully', async() =>{
+        const blogsInDb = await Blog.find({})
+        const blogs = blogsInDb.map(blog => blog.toJSON())
+        const initialBlog = blogs[1]
+
+
+        const blogToUpdate = {
+            title: initialBlog.title,
+            author: initialBlog.author,
+            url: initialBlog.url,
+            likes: 120
+        }
+
+        await api
+            .put(`/api/blogs/${initialBlog.id}`)
+            .send(blogToUpdate)
+            .expect(200)
+        
+        const response = await api.get(`/api/blogs/${initialBlog.id}`)
+
+        assert.notDeepStrictEqual(response.body, initialBlog)
+    })
+}) 
 
 after(async () => {
     await mongoose.connection.close()
