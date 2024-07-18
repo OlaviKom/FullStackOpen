@@ -2,8 +2,10 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Häjyt",
+    "title": "Häjyt4",
     "author": "Jussi Murikka ja Antti Karhu",
     "url": "nottaristus.fi",
-    "likes": 4353635
+    "likes": 4353635,
+    "user": "66983024d5ef67eab73dfaff"
+
 }

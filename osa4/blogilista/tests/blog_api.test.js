@@ -4,9 +4,12 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
+
+const helper = require('./test_helper')
 
 const Blog = require('../models/blog')
-const { request } = require('node:http')
+const User = require('../models/user')
 
 
 const initialBlogs = [
@@ -171,8 +174,106 @@ describe('updating of a blog', () => {
 
         assert.notDeepStrictEqual(response.body, initialBlog)
     })
-}) 
+})
+
+describe("creating a new user", () => {
+    beforeEach(async () => {
+        await User.deleteMany({})
+
+        const passwordHash = await bcrypt.hash('sekret', 10)
+        const user = new User({ username: 'root', passwordHash })
+
+        await user.save()
+    })
+
+    test('creating a new user successfully', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'newUser',
+            name: 'TestUser',
+            password: 'salasana'
+        }
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+        
+        const usernames = usersAtEnd.map(u => u.username)
+        assert(usernames.includes(newUser.username))
+    })
+
+    test('creating a new user fails if username is already taken', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'TestUser',
+            password: 'salasana'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert(result.body.error.includes('expected `username` to be unique'))
+
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+
+    })
+
+    test('creating a new user fails if password length is under 3 characters', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'root',
+            name: 'TestUser',
+            password: 'sa'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert.ok(result.body.error.includes('password must be at least tre characters long'))
+
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    })
+
+    test('creating a new user fails if username length is under 3 characters', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const newUser = {
+            username: 'ro',
+            name: 'TestUser',
+            password: 'salasana'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        const usersAtEnd = await helper.usersInDb()
+        assert.ok(result.body.error.includes('User validation failed: username'))
+
+        assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    })
+})
 
 after(async () => {
+    await User.deleteMany({})
     await mongoose.connection.close()
 })
