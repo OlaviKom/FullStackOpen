@@ -1,11 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkthcmlpbmEiLCJpZCI6IjY2OWFjMGNhYjEzNjRiZWQyNzdhNTNiNyIsImlhdCI6MTcyMTQyNDMzNn0.7r36pJilxEwBDvctStzMtLx0gj-wgQXT-BpTJbdFG4M
 
 {
-    "title": "Häjyt666",
-    "author": "Jussi Murikka ja Antti Karhu",
-    "url": "nottaristus.fi",
-    "likes": 4353635,
-    "user": "66983024d5ef67eab73dfaff"
-
+    "title": "Rapuja ja kossua",
+    "author": "Kaarina Tuominen",
+    "url": "rapujakossua.fi",
+    "likes": 323242
 }
