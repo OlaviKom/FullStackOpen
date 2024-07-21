@@ -1,6 +1,5 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkthcmlpbmEiLCJpZCI6IjY2OWFjMGNhYjEzNjRiZWQyNzdhNTNiNyIsImlhdCI6MTcyMTU2NTAwNX0.MP9wsyoa1FuK_NqbUDERMOf5YR0_VItsO8Pp66JmK5I
 
 {
     "title": "Nurmikon leikkauksen abc",
