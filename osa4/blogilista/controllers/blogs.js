@@ -44,12 +44,16 @@ const getTokenFrom = request => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
+  /*
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if(!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
 
   const user = await User.findById(decodedToken.id)
+  */
+
+  const user = request.user
 
   const blog = new Blog({
     title: body.title,
@@ -68,15 +72,21 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async(request, response) => {
   
+  /*
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if(!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
+    */
+  
 
   const blog = await Blog.findById(request.params.id)
+  const user = request.user
+  console.log(blog.user.toString())
+  console.log(user.id)
 
-  if(blog.user.toString() === decodedToken.id) {
-    await Blog.findByIdAndDelete(request.params.id)
+  if(blog.user.toString() === user.id) {
+    await Blog.findByIdAndDelete(user)
     response.status(204).end()
   } else {
     return response.status(401).json({ error: 'Only the person how has created the blog can delete it'})

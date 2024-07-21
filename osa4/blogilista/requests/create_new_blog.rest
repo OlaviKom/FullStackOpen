@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Nurmikon leikkauksen abc",
+    "title": "Siimaa ja kuhaa",
     "author": "Kaarina Tuominen",
-    "url": "nurmikonleikkaus.fi",
+    "url": "kuhastus.fi",
     "likes": 9385498
 }
