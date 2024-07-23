@@ -54,7 +54,7 @@ blogsRouter.post('/', async (request, response) => {
   */
 
   const user = request.user
-
+  
   const blog = new Blog({
     title: body.title,
     author: body.author,
@@ -86,7 +86,7 @@ blogsRouter.delete('/:id', async(request, response) => {
   console.log(user.id)
 
   if(blog.user.toString() === user.id) {
-    await Blog.findByIdAndDelete(user)
+    await Blog.findByIdAndDelete(blog.id)
     response.status(204).end()
   } else {
     return response.status(401).json({ error: 'Only the person how has created the blog can delete it'})
