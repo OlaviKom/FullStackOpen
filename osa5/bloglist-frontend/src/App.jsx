@@ -4,6 +4,8 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/loginform'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import './styles/notification.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +15,8 @@ const App = () => {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -31,17 +35,31 @@ const App = () => {
 
   const addBlog = async (event) => {
     event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
-    const newBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(newBlog))
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
+    try{
+      const blogObject = {
+        title: newTitle,
+        author: newAuthor,
+        url: newUrl
+      }
+      const newBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(newBlog))
+      setNewTitle('')
+      setNewAuthor('')
+      setNewUrl('')
+      setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+      setMessageType('succeed')
+      setTimeout(() => {
+        setMessage('null')
+        setMessageType('null')
+      },5000)
+    } catch(exception) {
+      setMessage('adding a blog failed')
+      setMessageType('error')
+      setTimeout(() =>{
+        setMessage('null')
+        setMessageType('null')
+      }, 5000)
+    }  
   }
 
   const handleLogin = async (event) => {
@@ -58,9 +76,11 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch(exception) {
-      //setErroMessage('wrong credentials')
+      setMessage('wrong username or password')
+      setMessageType('error')
       setTimeout(() => {
-        //setErroMessage('null')
+        setMessage('null')
+        setMessageType('null')
       },5000)
     }
     console.log('loging in with', username, password)
@@ -75,12 +95,16 @@ const App = () => {
     return (
       <div>
         <h2>Login in to application</h2>
+        <Notification
+          message = {message}
+          type = {messageType} 
+        />
         <LoginForm
-        handleLogin = {handleLogin}
-        username = {username}
-        setUsername = {setUsername}
-        password = {password}
-        setPassword = {setPassword}
+          handleLogin = {handleLogin}
+          username = {username}
+          setUsername = {setUsername}
+          password = {password}
+          setPassword = {setPassword}
          />
       </div>
     ) 
@@ -88,18 +112,22 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification
+         message={message}
+         type={messageType}     
+      />
       <p> {user.name} logged in
       <button onClick = {handleLogout}>logout</button>
       </p>
       <h2>create new</h2>
       <BlogForm
-      addBlog = {addBlog}
-      title = {newTitle}
-      setNewTitle = {setNewTitle}
-      autho = {newAuthor}
-      setNewAuthor = {setNewAuthor}
-      url = {newUrl}
-      setNewUrl = {setNewUrl}
+        addBlog = {addBlog}
+        title = {newTitle}
+        setNewTitle = {setNewTitle}
+        autho = {newAuthor}
+        setNewAuthor = {setNewAuthor}
+        url = {newUrl}
+        setNewUrl = {setNewUrl}
       />
       <br></br>
       {blogs.map(blog =>
