@@ -10,6 +10,7 @@ import './styles/notification.css'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [sortedBlogs, setSortedBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -38,9 +39,6 @@ const App = () => {
       try{ 
       const newBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(newBlog))
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
       setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
       setMessageType('succeed')
       setTimeout(() => {
@@ -87,6 +85,12 @@ const App = () => {
     setUser(null)
   }
 
+  const sortBlogs = (blogs) => {
+    const sortedBlogs = blogs.sort((blogA, blogB) => blogB.likes - blogA.likes)
+
+    return sortedBlogs
+  }
+
   if(user === null){
     return (
       <div>
@@ -124,8 +128,7 @@ const App = () => {
       </Togglable>
       
       <br></br>
-      
-      {blogs.map(blog =>
+      {sortBlogs(blogs).map(blog =>
         <Blog 
           key={blog.id} 
           blog={blog} 

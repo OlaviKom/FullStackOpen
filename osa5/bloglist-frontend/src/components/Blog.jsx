@@ -22,6 +22,20 @@ const Blog = ({ blog, user, blogs, setBlogs, }) => {
     borderWidth: 1,
     marginBottom: 5
   }
+
+  const removeBlog = async (blog) => {
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+      try{
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+      } catch (exception){
+        console.log(exception)
+      }
+    }
+  }
+  
+  
+  
   return(
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -35,7 +49,10 @@ const Blog = ({ blog, user, blogs, setBlogs, }) => {
         <div> likes {blog.likes}
           <button style= {{marginLeft: '5px'}} onClick={() => addLike(blog)} >like</button>
         </div>
-        <div>{user.name}</div>
+        {blog.user && <div>{blog.user.name}</div>}
+        {blog.user.name === user.name &&(
+          <button onClick = {() => removeBlog(blog)}>delete</button>
+        )}
       </div>
     </div>  
 )}
