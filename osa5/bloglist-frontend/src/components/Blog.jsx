@@ -1,18 +1,21 @@
-import Togglable from "./Togglable"
-import { useState } from "react"
-import blogService from "../services/blogs"
+import Togglable from './Togglable'
+import { useState } from 'react'
+import blogService from '../services/blogs'
 const Blog = ({ blog, user, blogs, setBlogs, }) => {
 
   const [blogInfoVisible, setBlogInfoVisible] = useState(false)
 
-  const hideWhenVisible = {display: blogInfoVisible ? 'none' : ''}
-  const showWhenVisible = {display: blogInfoVisible ? '' : 'none'}
+  const hideWhenVisible = { display: blogInfoVisible ? 'none' : '' }
+  const showWhenVisible = { display: blogInfoVisible ? '' : 'none' }
 
   const addLike = async (blog) => {
-    blog.likes += 1
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes += 1
+    }
 
-    const updatedBlog = await blogService.update(blog.id, blog)
-    setBlogs(blogs.map(b => (b.id === blog.id ? updatedBlog : b)))
+    const returnedBlog = await blogService.update(blog.id, updatedBlog)
+    setBlogs(blogs.map(b => (b.id === blog.id ? returnedBlog : b)))
   }
 
   const blogStyle = {
@@ -33,36 +36,26 @@ const Blog = ({ blog, user, blogs, setBlogs, }) => {
       }
     }
   }
-  
-  
-  
+
   return(
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
         {blog.title} {blog.author}
-        <button style= {{marginLeft: '5px'}} onClick = {() => setBlogInfoVisible(true)}>view</button>
+        <button style= {{ marginLeft: '5px' }} onClick = {() => setBlogInfoVisible(true)}>view</button>
       </div>
       <div style={showWhenVisible}>
-      {blog.title} {blog.author}
-      <button style= {{marginLeft: '5px'}} onClick = {() => setBlogInfoVisible(false)}>hide</button>
+        {blog.title} {blog.author}
+        <button style= {{ marginLeft: '5px' }} onClick = {() => setBlogInfoVisible(false)}>hide</button>
         <div>{blog.url}</div>
         <div> likes {blog.likes}
-          <button style= {{marginLeft: '5px'}} onClick={() => addLike(blog)} >like</button>
+          <button style= {{ marginLeft: '5px' }} onClick={() => addLike(blog)} >like</button>
         </div>
-        {blog.user && <div>{blog.user.name}</div>}
+        <div>{blog.user.name}</div>
         {blog.user.name === user.name &&(
           <button onClick = {() => removeBlog(blog)}>delete</button>
         )}
       </div>
-    </div>  
-)}
+    </div>
+  )}
 
 export default Blog
-
-/*
-<Togglable buttonLabel = 'view'>
-        <div>{blog.url}</div>
-        <div>likes {blog.likes}</div>
-        <div>{blog.author}</div>
-      </Togglable>
-*/

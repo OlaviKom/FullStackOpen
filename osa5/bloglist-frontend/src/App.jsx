@@ -23,8 +23,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
-  }, [])
+    )}, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
@@ -36,7 +35,7 @@ const App = () => {
   }, [])
 
   const addBlog = async (blogObject) => {
-      try{ 
+    try{
       const newBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(newBlog))
       setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
@@ -48,11 +47,11 @@ const App = () => {
     } catch(exception) {
       setMessage('adding a blog failed')
       setMessageType('error')
-      setTimeout(() =>{
+      setTimeout(() => {
         setMessage('null')
         setMessageType('null')
       }, 5000)
-    }  
+    }
   }
 
 
@@ -66,7 +65,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBloglistUser', JSON.stringify(user)
       )
-      setUser(user) 
+      setUser(user)
       setUsername('')
       setPassword('')
     } catch(exception) {
@@ -77,7 +76,6 @@ const App = () => {
         setMessageType('null')
       },5000)
     }
-    console.log('loging in with', username, password)
   }
 
   const handleLogout = () => {
@@ -97,7 +95,7 @@ const App = () => {
         <h2>Login in to application</h2>
         <Notification
           message = {message}
-          type = {messageType} 
+          type = {messageType}
         />
         <LoginForm
           handleLogin = {handleLogin}
@@ -105,19 +103,19 @@ const App = () => {
           setUsername = {setUsername}
           password = {password}
           setPassword = {setPassword}
-         />
+        />
       </div>
-    ) 
+    )
   }
   return (
     <div>
       <h2>blogs</h2>
       <Notification
-         message={message}
-         type={messageType}     
+        message={message}
+        type={messageType}
       />
       <p> {user.name} logged in
-      <button onClick = {handleLogout}>logout</button>
+        <button onClick = {handleLogout}>logout</button>
       </p>
       <h2>create new</h2>
       <Togglable buttonLabel='new blog' ref={blogFormRef}>
@@ -126,17 +124,17 @@ const App = () => {
           createBlog={addBlog}
         />
       </Togglable>
-      
+
       <br></br>
       {sortBlogs(blogs).map(blog =>
-        <Blog 
-          key={blog.id} 
-          blog={blog} 
-          user={user} 
-          blogs = {blogs} 
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          blogs = {blogs}
           setBlogs={setBlogs} />
       )}
-      
+
     </div>
   )
 }
