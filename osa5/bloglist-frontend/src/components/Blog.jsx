@@ -37,24 +37,28 @@ const Blog = ({ blog, user, blogs, setBlogs, }) => {
     }
   }
 
+  if(!blogInfoVisible){
+    return(
+      <div style={blogStyle}>
+        <div>
+          {blog.title} {blog.author}
+          <button style= {{ marginLeft: '5px' }} onClick = {() => setBlogInfoVisible(true)}>view</button>
+        </div>
+      </div>
+    )
+  }
   return(
     <div style={blogStyle}>
-      <div style={hideWhenVisible}>
-        {blog.title} {blog.author}
-        <button style= {{ marginLeft: '5px' }} onClick = {() => setBlogInfoVisible(true)}>view</button>
+      {blog.title} {blog.author}
+      <button style= {{ marginLeft: '5px' }} onClick = {() => setBlogInfoVisible(false)}>hide</button>
+      <div>{blog.url}</div>
+      <div> likes {blog.likes}
+        <button style= {{ marginLeft: '5px' }} onClick={() => addLike(blog)} >like</button>
       </div>
-      <div style={showWhenVisible}>
-        {blog.title} {blog.author}
-        <button style= {{ marginLeft: '5px' }} onClick = {() => setBlogInfoVisible(false)}>hide</button>
-        <div>{blog.url}</div>
-        <div> likes {blog.likes}
-          <button style= {{ marginLeft: '5px' }} onClick={() => addLike(blog)} >like</button>
-        </div>
-        <div>{blog.user.name}</div>
-        {blog.user.name === user.name &&(
-          <button onClick = {() => removeBlog(blog)}>delete</button>
-        )}
-      </div>
+      <div>{blog.user.name}</div>
+      {blog.user.name === user.name &&(
+        <button onClick = {() => removeBlog(blog)}>delete</button>
+      )}
     </div>
   )}
 
