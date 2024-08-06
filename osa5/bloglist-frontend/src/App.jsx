@@ -54,6 +54,18 @@ const App = () => {
     }
   }
 
+  const addLike = async id => {
+    const blog = blogs.find(b => b.id === id)
+
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes += 1
+    }
+
+    const returnedBlog = await blogService.update(blog.id, updatedBlog)
+    setBlogs(blogs.map(b => (b.id === blog.id ? returnedBlog : b)))
+  }
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -132,6 +144,7 @@ const App = () => {
           blog={blog}
           user={user}
           blogs = {blogs}
+          addLike = {addLike}
           setBlogs={setBlogs} />
       )}
 

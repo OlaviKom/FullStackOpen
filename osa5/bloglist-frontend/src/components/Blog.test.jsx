@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 import { expect } from 'vitest'
 
@@ -28,7 +29,7 @@ test('renders title and author', () => {
 
 })
 
-test('renders all the info after pushing view button', () => {
+test('renders all the info after pushing view button', async () => {
   const blog = {
     title: 'Component test',
     author: 'Timo Testaaja',
@@ -45,7 +46,9 @@ test('renders all the info after pushing view button', () => {
 
   const viewButton = screen.getByRole('button', 'view')
 
-  fireEvent.click(viewButton)
+  const userE = userEvent.setup()
+
+  await userE.click(viewButton)
 
   const titleAuthorElement = screen.getByText('Component test Timo Testaaja')
   expect(titleAuthorElement).toBeDefined()
@@ -58,5 +61,32 @@ test('renders all the info after pushing view button', () => {
 
   const userElement = screen.getByText('Testi User')
   expect(userElement).toBeDefined()
+
+})
+
+
+test('calls twice eventHandler addLike when push twice like button', async () => {
+  const blog = {
+    title: 'Component test',
+    author: 'Timo Testaaja',
+    url: 'testaa.fi',
+    likes: 1,
+    user: { name: 'Testi User' }
+  }
+
+  const user = { name: 'Testi User' }
+
+  const mockHandler = vi.fn()
+
+  render(<Blog blog={blog} user={user} addLike={mockHandler} />)
+
+  const userE = userEvent.setup()
+  const showButton = screen.getByRole('button','view')
+  await userE.click(showButton)
+  const likeButton = screen.getByText('like')
+  await userE.click(likeButton)
+  await userE.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 
 })
